@@ -1,0 +1,60 @@
+// src/screens/NotificationsLogScreen.js
+
+import React, { useState } from "react";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from "react-native";
+import { Ionicons } from "@expo/vector-icons"; // or react-native-vector-icons/Ionicons
+
+export default function NotificationsLogScreen() {
+  const [notifications, setNotifications] = useState([
+    { id: "1", text: "⏰ Time to sleep! Maintain your schedule.", color: "#E3F2FD" },
+    { id: "2", text: "😴 You slept better than last week!", color: "#E8F5E9" },
+    { id: "3", text: "💡 Try reducing caffeine before bed.", color: "#FFF3E0" },
+  ]);
+
+  const removeNotification = (id) => {
+    setNotifications((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={[styles.card, { backgroundColor: item.color }]}>
+      <Text style={styles.text}>{item.text}</Text>
+      <TouchableOpacity onPress={() => removeNotification(item.id)}>
+        <Image source={require('../assest/images/close.png')} style={{width:15, height:15}} />
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>🔔 Notifications Log</Text>
+      {notifications.length > 0 ? (
+        <FlatList
+          data={notifications}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      ) : (
+        <Text style={styles.empty}>No notifications yet 🎉</Text>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16, backgroundColor: "#F9FAFB" },
+  header: { fontSize: 22, fontWeight: "700", marginBottom: 20, color: "#222" },
+  card: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  text: { fontSize: 16, flex: 1, marginRight: 10, color: "#333" },
+  empty: { fontSize: 16, color: "#666", textAlign: "center", marginTop: 40 },
+});

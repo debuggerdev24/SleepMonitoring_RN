@@ -6,6 +6,7 @@ import {
   ImageBackground,
   FlatList,
   ListRenderItem,
+  ActivityIndicator,
 } from "react-native";
 import HorizontalCalendar from "../Custom/HorizontalCalendar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -43,6 +44,16 @@ export default function DashboardScreen({
   navigation,
 }: DashboardScreenProps): JSX.Element {
   const [sessions, setSessions] = useState<SleepSession[]>([]);
+    const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // show loader for 1 second
+
+    return () => clearTimeout(timer);
+  }, []);
+
 
   useEffect(() => {
     const loadSessions = async (): Promise<void> => {
@@ -102,26 +113,28 @@ export default function DashboardScreen({
         <HorizontalCalendar />
       </ImageBackground>
 
-      <View style={{ flex: 1, width: "100%" }}>
-        {sessions.length === 0 ? (
-          <Text
-            style={{
-              alignSelf: "center",
-              justifyContent: "center",
-              marginTop: "20%",
-            }}
-          >
-            No sleep sessions saved yet.
-          </Text>
-        ) : (
-          <FlatList
-            data={sessions}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderSession}
-            contentContainerStyle={{ paddingBottom: 80 }}
-          />
-        )}
-      </View>
+     {!loading ? <View style={{ flex: 1, width: "100%" }}>
+      {sessions.length === 0 ? (
+        <Text
+          style={{
+            alignSelf: "center",
+            justifyContent: "center",
+            marginTop: "20%",
+          }}
+        >
+          No sleep sessions saved yet.
+        </Text>
+      ) : (
+        <FlatList
+          data={sessions}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderSession}
+          contentContainerStyle={{ paddingBottom: 80 }}
+        />
+      )}
+    </View> : <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#6C63FF" />
+      </View>}
     </View>
   );
 }

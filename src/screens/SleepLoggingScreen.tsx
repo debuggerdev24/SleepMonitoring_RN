@@ -41,12 +41,24 @@ export default function SleepLoggingScreen({
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
   const [notes, setNotes] = useState<string>("");
 
-  const moods: Mood[] = [
-    { emoji: "😴", label: "Sleepy" },
-    { emoji: "😊", label: "Happy" },
-    { emoji: "😔", label: "Tired" },
-    { emoji: "😡", label: "Stressed" },
-  ];
+const moods: Mood[] = [
+  { emoji: "😴", label: "Sleepy" },
+  { emoji: "😊", label: "Happy" },
+  { emoji: "😔", label: "Tired" },
+  { emoji: "😡", label: "Stressed" },
+  { emoji: "😕", label: "Confused" },
+  { emoji: "😇", label: "Relaxed" },
+  { emoji: "😥", label: "Sad" },
+  { emoji: "😱", label: "Anxious" },
+  { emoji: "😌", label: "Content" },
+  { emoji: "🤯", label: "Overwhelmed" },
+  { emoji: "🤗", label: "Excited" },
+  { emoji: "😤", label: "Frustrated" },
+  { emoji: "🥱", label: "Bored" },
+  { emoji: "😎", label: "Confident" },
+  { emoji: "🤔", label: "Thoughtful" },
+];
+
 
   useEffect(() => {
     const loadSession = async (): Promise<void> => {
@@ -138,46 +150,51 @@ export default function SleepLoggingScreen({
     return `${hours}:${minutes}:${seconds}`;
   };
 
+  const handleButtonClick = () => {
+    navigation.goBack()
+    setDuration(0)
+       AsyncStorage.removeItem("sleep_start");
+      AsyncStorage.removeItem("sleep_end");
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
-        <Text style={styles.title}>🛌 Sleep Timer</Text>
+        <Text style={styles.greeting}>⏱ Duration</Text>
         <TouchableOpacity
           style={{ marginLeft: "auto" }}
-          onPress={() => navigation.navigate("NotificationsLog")}
+          onPress={() => handleButtonClick()}
         >
           <Image
-            source={require("../assest/images/bell.png")}
+            source={require("../assest/images/close.png")}
             style={{ width: 20, height: 20, tintColor: "black" }}
           />
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.label}>⏱ Duration</Text>
-      <Text style={styles.timer}>{formatTime(duration)}</Text>
+      {/* <Text style={styles.subtitle}> Duration</Text> */}
+      <Text style={styles.time}>{formatTime(duration)}</Text>
 
       <View style={styles.btnRow}>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#4CAF50" }]}
+          style={[styles.button, { backgroundColor:isRunning ? "lightgray" : "green" }]}
           onPress={handleStart}
           disabled={isRunning}
         >
-          <Text style={styles.buttonText}>▶️ Start</Text>
+          <Text style={[styles.buttonText,{color: isRunning ? 'black' : "#fff",}]}>Start</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#E53935" }]}
+          style={[styles.button, { backgroundColor: !isRunning ? 'lightgray' : "#FF4A4A" }]}
           onPress={handleStop}
           disabled={!isRunning}
         >
-          <Text style={styles.buttonText}>⏹ Stop</Text>
+          <Text style={[styles.buttonText, {color: !isRunning ? 'black' : "#fff",}]}>Stop</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={{ flex: 1, padding: 16 }}>
-        <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 10 }}>
-          How are you feeling today?
-        </Text>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.subtitle}>How are you feeling today?</Text>
 
         <MoodPicker
           moods={moods}
@@ -185,16 +202,17 @@ export default function SleepLoggingScreen({
           onSelect={(mood: Mood) => setSelectedMood(mood)}
         />
 
+      </View>
         {selectedMood && (
-          <Text style={{ marginTop: 20, fontSize: 16 }}>
-            Selected Mood: {selectedMood.label} {selectedMood.emoji}
+          <Text style={[styles.subtitle, { marginBottom: 20 }]}>
+            Add your session description:
           </Text>
         )}
-      </View>
 
       <TextInput
         style={[styles.input, { height: 100 }]}
         placeholder="Notes"
+        placeholderTextColor="#ccc"
         value={notes}
         onChangeText={setNotes}
         multiline
@@ -202,7 +220,7 @@ export default function SleepLoggingScreen({
 
       {endTime && (
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>💾 Save Session</Text>
+          <Text style={[styles.buttonText, {fontSize:20, color:"white", fontWeight:"400"}]}>Save Session</Text>
         </TouchableOpacity>
       )}
     </ScrollView>
@@ -210,37 +228,32 @@ export default function SleepLoggingScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: "#F9FAFB" },
-  title: { fontSize: 24, fontWeight: "700", color: "#333" },
-  label: { fontSize: 16, fontWeight: "600", marginBottom: 8 },
-  timer: {
-    fontSize: 32,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 20,
-  },
+  container: { flex: 1, padding: 20, backgroundColor: "#EAF4FF", paddingTop:25 },
+  greeting: { fontSize: 28, fontWeight: "700", color: "#1E1E2C",},
+  subtitle: { fontSize: 16, color: "#1E1E2C", marginTop: 8 },
+  time: { fontSize: 28, fontWeight: "700", color: "#1E1E2C", textAlign: "center", marginVertical: 20 },
   btnRow: { flexDirection: "row", justifyContent: "space-around", marginVertical: 20 },
   button: {
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 20,
     alignItems: "center",
     width: "40%",
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  buttonText: {  fontSize: 25, fontWeight: "700" },
   saveButton: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#4A90E2",
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 20,
     alignItems: "center",
     marginTop: 10,
   },
-  saveButtonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 12,
+    borderColor: "#4A90E2",
+    borderRadius: 20,
     padding: 12,
     marginBottom: 15,
     backgroundColor: "#fff",
+    color: "#1E1E2C",
   },
 });

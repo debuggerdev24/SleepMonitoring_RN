@@ -13,8 +13,8 @@ import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
 interface SleepSession {
   id: string;
-  startTime: string | number; 
-  duration: string; 
+  startTime: string | number;
+  duration: string;
   quality?: string;
   notes?: string;
 }
@@ -66,9 +66,9 @@ export default function SleepHistoryScreen({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🌙 Sleep Adventure</Text>
-
+      <Text style={styles.greeting}>🌙 Sleep Adventure</Text>
       <Text style={styles.subtitle}>✨ Last 7 Sleep Sessions</Text>
+
       {chartData.length > 0 ? (
         <LineChart
           data={{
@@ -80,16 +80,16 @@ export default function SleepHistoryScreen({
           yAxisSuffix="h"
           fromZero
           chartConfig={{
-            backgroundGradientFrom: "#FFD6E0",
-            backgroundGradientTo: "#A5D8FF",
+            backgroundGradientFrom: "#1E1E2C",
+            backgroundGradientTo: "#4A90E2",
             decimalPlaces: 1,
-            color: (opacity = 1) => `rgba(255, 105, 180, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0,0,0, ${opacity})`,
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(255,255,255, ${opacity})`,
             style: { borderRadius: 16 },
             propsForDots: {
-              r: "7",
+              r: "6",
               strokeWidth: "2",
-              stroke: "#FF69B4",
+              stroke: "#FFD700",
             },
           }}
           bezier
@@ -99,12 +99,12 @@ export default function SleepHistoryScreen({
           formatYLabel={(yValue) => `${parseFloat(yValue).toFixed(1)}`}
         />
       ) : (
-        <Text style={{ marginTop: 20, color: "#666", textAlign: "center" }}>
+        <Text style={{ marginTop: 20, color: "#fff", textAlign: "center" }}>
           💤 No sleep data yet. Time to dream!
         </Text>
       )}
 
-      <Text style={[styles.subtitle, { marginTop: 40 }]}>
+      <Text style={[styles.subtitle, { marginTop: 20 }]}>
         🛌 Recent Sleep Sessions
       </Text>
 
@@ -119,27 +119,26 @@ export default function SleepHistoryScreen({
           .map((session) => (
             <ImageBackground
               key={session.id}
-              source={require("../assest/images/cloud.jpeg")}
-              style={styles.sessionCard}
+              source={require("../assest/images/cloud.jpg")}
+              style={styles.card}
               imageStyle={{ borderRadius: 20 }}
             >
-              <Text style={styles.sessionDate}>
+              <Text style={styles.subtitle}>
                 📅 {formatDate(session.startTime)}
               </Text>
-              <Text style={styles.sessionDuration}>
-                ⏰ Duration: <Text style={styles.bold}>{session.duration}</Text>
+              <Text style={styles.subtitle}>
+                ⏰ Duration: <Text style={styles.scoreText}>{session.duration}</Text>
               </Text>
-              <Text style={styles.sessionDuration}>
-                🌟 Quality:{" "}
-                <Text style={styles.bold}>{session.quality ?? "--"}</Text>
+              <Text style={styles.subtitle}>
+                🌟 Quality: <Text style={styles.scoreText}>{session.quality ?? "--"}</Text>
               </Text>
               {session.notes ? (
-                <Text style={styles.sessionNotes}>💭 Notes: {session.notes}</Text>
+                <Text style={styles.subtitle}>💭 Notes: {session.notes}</Text>
               ) : null}
             </ImageBackground>
           ))}
         {sessions.length === 0 && (
-          <Text style={{ marginTop: 10, color: "#666", textAlign: "center" }}>
+          <Text style={{ marginTop: 10, color: "#fff", textAlign: "center" }}>
             💤 No recent sleep data yet.
           </Text>
         )}
@@ -149,38 +148,18 @@ export default function SleepHistoryScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: "#FFF7FA" },
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    marginBottom: 20,
-    textAlign: "center",
-    color: "#FF69B4",
+  container: {
+    flex: 1,
+    backgroundColor: "#EAF4FF",
+    padding: 16,
   },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginTop: 15,
-    marginBottom: 5,
-    color: "#6A5ACD",
-  },
-  sessionCard: {
-    backgroundColor: "#E0F7FA",
-    padding: 18,
+  greeting: { fontSize: 30, color: "#1E1E2C", fontWeight: "700", marginBottom: 10 },
+  subtitle: { fontSize: 16, color: "#1E1E2C", marginTop: 6 },
+  card: {
+    backgroundColor: "#1E1E2C",
+    padding: 20,
     borderRadius: 20,
-    marginVertical: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: 16,
   },
-  sessionDate: { fontSize: 16, fontWeight: "600", color: "#333" },
-  sessionDuration: { fontSize: 15, color: "#444", marginTop: 6 },
-  bold: { fontWeight: "700", color: "#FF4500" },
-  sessionNotes: {
-    fontSize: 14,
-    color: "#555",
-    marginTop: 6,
-    fontStyle: "italic",
-  },
+  scoreText: { fontSize: 16, fontWeight: "400", color: "black" },
 });
